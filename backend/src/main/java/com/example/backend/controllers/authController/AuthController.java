@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.backend.entities.users.UsersDTO;
 import com.example.backend.requests.loginRequest.LoginRequest;
+import com.example.backend.services.membersService.MembersService;
 import com.example.backend.services.usersSevice.UsersService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -42,6 +43,9 @@ public class AuthController {
 
     @Autowired
     private UsersService usersService;
+
+    @Autowired
+    private MembersService membersService;
 
     @Autowired
     private CsrfTokenRepository csrfTokenRepository;
@@ -85,10 +89,12 @@ public class AuthController {
                 .collect(Collectors.toList());
             UsersDTO userDTO = usersService.getUserByEmail(user.getUsername());
             String id = userDTO.getId();
+            String memberId = userDTO.getMemberId();
             sessionInfo.put("user", user.getUsername());
             sessionInfo.put("id", id);
             sessionInfo.put("roles", roles.get(0));
             sessionInfo.put("sessionId", sessionId);
+            sessionInfo.put("memberId", memberId );
 
             return ResponseEntity.ok(sessionInfo);
         } catch (SecurityException e) {

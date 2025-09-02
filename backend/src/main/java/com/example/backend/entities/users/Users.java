@@ -51,11 +51,10 @@ public class Users {
     @JoinColumn(name = "unit_id", referencedColumnName = "id", nullable = false)
     private OrganizationUnits organizationUnit;
 
-    @NotBlank
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
-    @JoinColumn(name = "member_id", referencedColumnName = "id", nullable = false)
+    @OneToOne(fetch = FetchType.LAZY)
     private Members member;
 
     @OneToMany(mappedBy = "users", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<AccessToken> accessToken;
+
 }

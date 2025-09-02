@@ -16,3 +16,6 @@ services:
       - "3000:3000"
     depends_on:
       - backend
+    volumes:
+       - ./localhost.pem:/app/localhost.pem:ro
+       - ./localhost-key.pem:/app/localhost-key.pem:ro

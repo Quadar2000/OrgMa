@@ -1,4 +1,4 @@
-package com.example.backend.helpers.customCsrfTokenRepository;
+package com.example.backend.repositories.customCsrfTokenRepository;
 
 import org.springframework.stereotype.Component;
 

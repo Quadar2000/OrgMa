@@ -3,8 +3,10 @@ package com.example.backend.config;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
@@ -21,8 +23,9 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
-import com.example.backend.helpers.customCsrfTokenRepository.CustomCsrfTokenRepository;
+import com.example.backend.repositories.customCsrfTokenRepository.CustomCsrfTokenRepository;
 import com.example.backend.services.customUserDetailsService.CustomUserDetailsService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,7 +46,6 @@ public class SecurityConfig {
             .csrf(csrf -> csrf
                 .csrfTokenRepository(customCsrfTokenRepository)
                 .ignoringRequestMatchers("/api/validate-token")
-                .ignoringRequestMatchers("/api/members/get-members")
                 .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
                 .requireCsrfProtectionMatcher(new RequestMatcher() {
                     @Override
@@ -53,11 +55,12 @@ public class SecurityConfig {
                     }
                 })
             )
+            //.requiresChannel(channel -> channel.anyRequest().requiresSecure())
 
             .anonymous(anonymous-> anonymous.disable())
             .authorizeHttpRequests(authz -> authz
                 .requestMatchers( "/api/auth/login","/api/auth/csrf-token","/api/auth/session-info").permitAll()
-                .requestMatchers( "/api/members/get-members").hasRole("OWNER")
+                .requestMatchers( "/api/members/get-members").hasAnyRole("OWNER","ADMIN","UNIT_ADMIN")
                 .anyRequest().authenticated()
                 
                             
@@ -113,13 +116,32 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000")); 
+        configuration.setAllowedOrigins(Arrays.asList("https://localhost:3000","http://localhost:3000"));
+        //configuration.setAllowedOrigins(Arrays.asList("*")); 
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization","x-xsrf-token"));
         configuration.setAllowCredentials(true);
+        
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
+    // @Bean
+    // public FilterRegistrationBean<CorsFilter> corsFilterRegistrationBean() {
+    //     CorsConfiguration configuration = new CorsConfiguration();
+    //     configuration.setAllowedOrigins(Arrays.asList("https://localhost:3000"));
+    //     //configuration.setAllowedOrigins(Arrays.asList("*"));
+    //     configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+    //     configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization", "x-xsrf-token"));
+    //     configuration.setAllowCredentials(true);
+
+    //     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    //     source.registerCorsConfiguration("/**", configuration);
+
+    //     FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(source));
+    //     bean.setOrder(Ordered.HIGHEST_PRECEDENCE); 
+    //     return bean;
+    // }
 
 }

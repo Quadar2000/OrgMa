@@ -1,14 +1,15 @@
 package com.example.backend.entities.adress;
 
+import java.util.Set;
+
 import com.example.backend.entities.members.Members;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
@@ -47,6 +48,6 @@ public class Adress {
     @Column(nullable = false)
     private String country;
 
-    @OneToOne(mappedBy = "adress", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private Members member;
+    @OneToMany(mappedBy = "adress")
+    private Set<Members> members;
 }

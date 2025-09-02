@@ -14,11 +14,13 @@ public class UsersDTO {
     private String id;
     private String email;
     private Boolean active;
+    private String memberId;
 
     @PersistenceConstructor
-    public UsersDTO(String id, String email, Boolean active) {
+    public UsersDTO(String id, String email, Boolean active, String memberId) {
         this.id = id;
         this.email = email;
         this.active = active;
+        this.memberId = memberId;
     }
 }

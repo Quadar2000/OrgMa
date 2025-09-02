@@ -4,7 +4,9 @@ import java.time.LocalDate;
 
 import com.example.backend.entities.adress.Adress;
 import com.example.backend.entities.organizationUnits.OrganizationUnits;
+import com.example.backend.entities.users.Users;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -66,7 +68,11 @@ public class Members {
     private OrganizationUnits organizationUnit;
 
     @NotBlank
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "adress_id", referencedColumnName = "id", nullable = false)
     private Adress adress;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    private Users user;
 }
